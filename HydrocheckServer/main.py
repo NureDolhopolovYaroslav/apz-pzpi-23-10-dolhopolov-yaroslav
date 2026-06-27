@@ -1,5 +1,6 @@
 # main.py
 from fastapi import FastAPI, Depends, HTTPException, status, Header, Query, Response
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import Session, sessionmaker
 from datetime import datetime, timedelta
@@ -36,6 +37,16 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc"
 )
+
+# ==================== CORS ====================
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# ===============================================
 
 
 # Залежність для отримання сесії бд
@@ -108,7 +119,7 @@ async def admin_create_user(
     db_user = User(
         username=user.username,
         email=user.email,
-        password_hash=user.password,  # Пароль передається адміном
+        password_hash=user.password,
         role=user.role,
         phone=user.phone,
         is_active=True
